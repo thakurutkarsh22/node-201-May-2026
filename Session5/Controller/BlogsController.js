@@ -1,31 +1,20 @@
 const BlogModel = require("../Models/Blogs.Model");
+const BlogService = require("../Services/BlogService");
 
 async function CreateBlog (req, res) {
     const { title, content, author } = req.body;
 
-    // object of blog 
-
-    const blogObject = new BlogModel({ title, content, author });
-
-
-    // talk to db to save this blogObject 
-
-    try {
-        const response = await blogObject.save(); // actual DB CALL for INSERTION in DB 
-        res.status(201).json({
-            success: true,
-            message: "Blog created successfully",
-            data: response,
-        });
-    } catch(Error) {
+   try {
+        const response = await BlogService.createBlog({ title, content, author });
+        console.log("response from controller", response);
+        res.status(201).json(response);
+    } catch(error) {
         res.status(500).json({
             success: false,
             message: "Blog creation failed",
-            error: Error,
+            error: error,
         });
     }
-
-
 }
 
 async function GetAllBlogs (req, res) {
