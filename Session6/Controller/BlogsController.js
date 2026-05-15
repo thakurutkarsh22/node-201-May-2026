@@ -6,8 +6,15 @@ async function CreateBlog (req, res) {
 
    try {
         const response = await BlogService.createBlog({ title, content, author });
-        console.log("response from controller", response);
-        res.status(201).json(response);
+        if(response.success) {
+            res.status(201).json(response);
+        } else {
+            res.status(400).json({
+                success: false,
+                message: "Blog creation failed",
+                error: response,
+            });
+        }
     } catch(error) {
         res.status(500).json({
             success: false,
