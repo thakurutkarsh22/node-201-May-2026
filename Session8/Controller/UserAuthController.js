@@ -13,9 +13,10 @@ async function registerUser(req, res) {
   "role": "user"
 }
      */
+    const { name, email, password, age, gender, address, role } = userData;
 
     try {
-        const response = await UserAuthService.registerUser(userData);
+        const response = await UserAuthService.registerUser({ name, email, password, age, gender, address, role });
         res.json({
             success: true,
             message: "User registered successfully",
@@ -35,6 +36,8 @@ async function loginUser(req, res) {
     const userData = req.body; // { email: "utkarsh@gmail.com", password: "123456" }
     try {
         const response = await UserAuthService.loginUser(userData);
+        const token = response.token;
+        res.cookie("auth-token", token, { httpOnly: true, secure: true, maxAge: 3600000 });
         res.json({
             success: true,
             message: "User logged in successfully",

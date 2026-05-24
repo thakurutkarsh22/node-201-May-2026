@@ -1,14 +1,19 @@
 const UserModel = require("../Models/Users.Model");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 class UserAuthService {
     constructor() {
     }
 
-    static async registerUser(userData) {
+    static async registerUser({name, email, password, age, gender, address, role}) {
         try {
             // this is a user object  - LOGIC 
             // how user data will look ? { name: "Utkarsh", email: "utkarsh@gmail.com", password: "123456" }
-            const userObject = new UserModel(userData);
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const userObject = new UserModel({name, email, password: hashedPassword, age, gender, address, role});
 
             // talk to db to save this userObject 
             const response = await userObject.save();
@@ -27,16 +32,26 @@ class UserAuthService {
             throw new Error("User not found");
         } else {
             // check if the password is correct
-            const isPasswordCorrect = user.password === userData.password;
+            // user.password - stored in db - 2b$10$En0/VQmktJ3Wi/oQiqZKr./22WNfVquJ4e0bIJUItgMrfJUgAZ
+            //userData.password - password from postman - asdf1234
             
-            console.log("isPasswordCorrect", isPasswordCorrect);
-            console.log("user.password", user.password);
-            console.log("userData.password", userData.password);
+            const isPasswordCorrect = await bcrypt.compare(userData.password, user.password); // true or false
             
             if(!isPasswordCorrect) {
                 throw new Error("Invalid password");
             } else {
-                return user;
+                const payloadForJwt = {
+                    userId: user._id,
+                    username: user.username,
+                    roles: user.role
+                }
+                const token = jwt.sign(payloadForJwt, process.env.JWT_SECRET, { expiresIn: '10000' });
+                
+                const responsePayload = {
+                    user: user,
+                    token:token
+                }
+                return responsePayload;
             }
         }
     }
