@@ -7,6 +7,10 @@ const { passwordAuthMiddleware } = require('./Middleware/AuthMiddleware/Password
 const { default: mongoose } = require('mongoose');
 const server = express();
 const PORT = 8089;
+const cors = require('cors');
+
+//impmement cors middleware
+server.use(cors());// this will allow all the domains to access the server
 
 
 // Middleware to parse the request body

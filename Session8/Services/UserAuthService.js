@@ -42,6 +42,7 @@ class UserAuthService {
             } else {
                 const payloadForJwt = {
                     userId: user._id,
+                    "helloworld": "yoyo",
                     username: user.username,
                     roles: user.role
                 }
