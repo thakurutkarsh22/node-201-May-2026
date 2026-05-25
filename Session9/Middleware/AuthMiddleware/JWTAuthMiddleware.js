@@ -25,6 +25,7 @@ function jwtAuthMiddleware(req, res, next) {
             } else {
                 // good request
                 console.log("decodedPayload from middleware", decodedPayload);
+                req.userId = decodedPayload.userId;
                 next();
             }
         } );

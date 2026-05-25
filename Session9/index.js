@@ -8,6 +8,10 @@ const { default: mongoose } = require('mongoose');
 const server = express();
 const PORT = 8089;
 const cors = require('cors');
+const passport = require('passport');
+const passportConfig = require('./Config/Passport');
+
+passportConfig(passport); // this will configure the passport strategies for my app
 
 //impmement cors middleware
 server.use(cors());// this will allow all the domains to access the server
